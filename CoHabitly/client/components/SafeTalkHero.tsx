@@ -222,7 +222,7 @@ export default function SafeTalkHero({
               width: `${200 + i * 50}px`,
               height: `${200 + i * 50}px`,
               animationDelay: `${i * 0.5}s`,
-              animationDuration: `${4 + i}s`,
+              animationDuration: `${(4 + i) * 1.3}s`,
             }}
           />
         ))}
