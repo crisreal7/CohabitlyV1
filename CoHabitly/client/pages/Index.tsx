@@ -129,11 +129,18 @@ export default function Index() {
     if (view === roadmapView || isTransitioning) return;
     setIsTransitioning(true);
 
-    // Update demo type to match roadmap view
-    if (view === "admin") {
-      setDemoType("admin");
-    } else if (view !== "admin" && demoType === "admin") {
-      setDemoType(view as "roommate" | "couples" | "student");
+    // Only update demo type if it's a manual roadmap selection that differs from current demo
+    // This prevents circular updates
+    const shouldUpdateDemoType =
+      (view === "admin" && demoType !== "admin") ||
+      (view !== "admin" && demoType === "admin" && view !== demoType);
+
+    if (shouldUpdateDemoType) {
+      if (view === "admin") {
+        setDemoType("admin");
+      } else if (view !== "admin" && demoType === "admin") {
+        setDemoType(view as "roommate" | "couples" | "student");
+      }
     }
 
     setTimeout(() => {
