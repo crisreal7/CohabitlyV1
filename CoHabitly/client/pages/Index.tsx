@@ -563,7 +563,7 @@ export default function Index() {
         clearTimeout(idleTimer);
       }
     };
-  }, [idleTimer, isAtTop]);
+  }, [isAtTop]);
 
   return (
     <div className="min-h-screen font-sans relative">
