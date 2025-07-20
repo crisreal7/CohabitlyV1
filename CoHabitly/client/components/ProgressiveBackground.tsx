@@ -227,7 +227,7 @@ export default function ProgressiveBackground({
     <div
       className="fixed inset-0 pointer-events-none transition-all duration-1000 ease-in-out"
       style={{
-        background: getProgressiveGradient(),
+        backgroundImage: getProgressiveGradient(),
         zIndex: -1,
       }}
     >
@@ -241,7 +241,7 @@ export default function ProgressiveBackground({
             top: `${Math.random() * 100}%`,
             width: `${150 + Math.random() * 200}px`,
             height: `${150 + Math.random() * 200}px`,
-            background: `radial-gradient(circle, ${
+            backgroundImage: `radial-gradient(circle, ${
               i % 3 === 0
                 ? particleColors.color1
                 : i % 3 === 1
@@ -259,7 +259,7 @@ export default function ProgressiveBackground({
       <div
         className="absolute inset-0 opacity-30"
         style={{
-          background: `
+          backgroundImage: `
             radial-gradient(ellipse 60% 40% at 20% 30%, ${particleColors.color1}30 0%, transparent 50%),
             radial-gradient(ellipse 80% 60% at 80% 20%, ${particleColors.color2}25 0%, transparent 50%),
             radial-gradient(ellipse 40% 80% at 40% 80%, ${particleColors.color3}20 0%, transparent 50%)
@@ -271,7 +271,7 @@ export default function ProgressiveBackground({
       <div
         className="absolute inset-0 opacity-40 animate-gradient-shift"
         style={{
-          background: `
+          backgroundImage: `
             conic-gradient(from ${scrollProgress * 360}deg at 50% 50%, 
               ${particleColors.color1}20 0deg,
               transparent 60deg,
