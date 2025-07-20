@@ -258,7 +258,7 @@ export default function SafeTalkHero({
       ref={heroRef}
       className="min-h-screen relative flex items-center justify-center overflow-hidden"
       style={{
-        background: `linear-gradient(135deg, 
+        backgroundColor: `linear-gradient(135deg, 
           ${
             currentScenarioData.type === "couples"
               ? "hsl(350, 82%, 82%)"
