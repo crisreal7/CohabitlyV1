@@ -9,6 +9,7 @@ interface ProgressiveBackgroundProps {
 export default function ProgressiveBackground({
   currentSection,
   heroTheme,
+  showAdminSection = false,
 }: ProgressiveBackgroundProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
 
