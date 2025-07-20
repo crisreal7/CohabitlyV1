@@ -129,7 +129,8 @@ export default function Index() {
     // Update demo type to match roadmap view (this is manual user selection)
     if (view === "admin") {
       setDemoType("admin");
-    } else if (view !== "admin" && demoType === "admin") {
+    } else {
+      // Always update demoType for non-admin views to ensure background changes
       setDemoType(view as "roommate" | "couples" | "student");
     }
 
