@@ -37,9 +37,9 @@ export default function ProgressiveBackground({
         // Admin section (4vh-5.5vh)
         progress = 0.75; // Admin theme
       } else {
-        // Roadmap transition (5.5vh+)
+        // Roadmap transition (4.5vh+)
         const sectionProgress = Math.min(
-          (scrollY - windowHeight * 5.5) / (windowHeight * 1.5),
+          (scrollY - windowHeight * 4.5) / (windowHeight * 1.5),
           1,
         );
         progress = 0.85 + sectionProgress * 0.15; // 0.85 to 1.0
