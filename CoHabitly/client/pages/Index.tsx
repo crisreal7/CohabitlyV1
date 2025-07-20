@@ -77,7 +77,7 @@ export default function Index() {
   const [demoTab, setDemoTab] = useState("overview");
   const [currentSection, setCurrentSection] = useState<CurrentSection>("hero");
   const [isAtTop, setIsAtTop] = useState(true);
-  const [idleTimer, setIdleTimer] = useState<NodeJS.Timeout | null>(null);
+  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [shouldRestartAnimation, setShouldRestartAnimation] = useState(false);
 
   // Update demo tab when demo type changes
