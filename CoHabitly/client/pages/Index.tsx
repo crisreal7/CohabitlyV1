@@ -538,14 +538,14 @@ export default function Index() {
       }
 
       // If user is at the top and idle timer isn't running, start it
-      if (nowAtTop && !idleTimer) {
+      if (nowAtTop && !idleTimerRef.current) {
         const timer = setTimeout(() => {
           // Only restart if still at top
           if (window.scrollY < 100) {
             setShouldRestartAnimation(true);
           }
         }, 3000);
-        setIdleTimer(timer);
+        idleTimerRef.current = timer;
       }
 
       // If user scrolled away from top, clear the restart flag
