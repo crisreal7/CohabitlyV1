@@ -555,7 +555,7 @@ export default function Index() {
         clearTimeout(idleTimer);
       }
     };
-  }, [idleTimer, isAtTop]);
+  }, [idleTimer, isAtTop, shouldRestartAnimation]);
 
   return (
     <div className="min-h-screen font-sans relative">
