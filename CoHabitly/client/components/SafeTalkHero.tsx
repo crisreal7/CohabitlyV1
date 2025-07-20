@@ -216,7 +216,7 @@ export default function SafeTalkHero({
     ) {
       setCurrentScenario(targetScenarioIndex);
     }
-  }, [currentDemo, currentScenario, animationLoopActive, scenarios]);
+  }, [currentDemo, currentScenario, animationLoopActive]);
 
   const handleCTAClick = (action: string) => {
     const scenario = scenarios[currentScenario];
