@@ -76,6 +76,9 @@ export default function Index() {
   >("roommate");
   const [demoTab, setDemoTab] = useState("overview");
   const [currentSection, setCurrentSection] = useState<CurrentSection>("hero");
+  const [isAtTop, setIsAtTop] = useState(true);
+  const [idleTimer, setIdleTimer] = useState<NodeJS.Timeout | null>(null);
+  const [shouldRestartAnimation, setShouldRestartAnimation] = useState(false);
 
   // Update demo tab when demo type changes
   useEffect(() => {
@@ -486,11 +489,21 @@ export default function Index() {
     return () => clearInterval(interval);
   }, []);
 
-  // Track current section based on scroll position
+  // Track current section based on scroll position and handle idle detection
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
+
+      // Clear existing idle timer
+      if (idleTimer) {
+        clearTimeout(idleTimer);
+        setIdleTimer(null);
+      }
+
+      const wasAtTop = isAtTop;
+      const nowAtTop = scrollY < 100;
+      setIsAtTop(nowAtTop);
 
       if (scrollY < windowHeight * 0.8) {
         setCurrentSection("hero");
@@ -501,13 +514,26 @@ export default function Index() {
       } else {
         setCurrentSection("roadmap");
       }
+
+      // If user just reached the top, start idle timer
+      if (nowAtTop && !wasAtTop) {
+        const timer = setTimeout(() => {
+          setShouldRestartAnimation(true);
+        }, 3000);
+        setIdleTimer(timer);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
     handleScroll();
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (idleTimer) {
+        clearTimeout(idleTimer);
+      }
+    };
+  }, [idleTimer, isAtTop]);
 
   return (
     <div className="min-h-screen font-sans relative">
@@ -521,6 +547,12 @@ export default function Index() {
       <SafeTalkHero
         onDemoSelect={(type) => setDemoType(type)}
         currentDemo={demoType === "admin" ? "roommate" : demoType}
+        onScenarioChange={(type) => {
+          // Only update demo type if user hasn't manually selected one
+          if (currentSection === "hero") {
+            setDemoType(type);
+          }
+        }}
       />
       {/* Interactive Demo Section */}
       <section
