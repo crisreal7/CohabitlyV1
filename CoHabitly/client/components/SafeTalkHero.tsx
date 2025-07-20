@@ -202,8 +202,6 @@ export default function SafeTalkHero({
     hasUserScrolled,
     chatMessages.length,
     currentScenario,
-    scenarios,
-    onScenarioChange,
   ]);
 
   // Sync scenario with currentDemo when demo selection changes externally
