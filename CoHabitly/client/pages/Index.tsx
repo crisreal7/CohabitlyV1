@@ -1117,7 +1117,15 @@ export default function Index() {
 
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
               The Journey to Better
-              <span className="text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text block">
+              <span
+                className={`text-transparent bg-clip-text block transition-all duration-2000 ease-in-out ${
+                  demoType === "couples"
+                    ? "bg-gradient-to-r from-rose-500 to-pink-600 animate-pulse"
+                    : demoType === "student"
+                      ? "bg-gradient-to-r from-emerald-500 to-teal-600 animate-pulse"
+                      : "bg-gradient-to-r from-blue-500 to-indigo-600 animate-pulse"
+                }`}
+              >
                 Shared Living
               </span>
             </h2>
