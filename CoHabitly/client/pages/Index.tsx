@@ -91,14 +91,16 @@ export default function Index() {
     }
   }, [demoType]);
 
-  // Sync roadmap view with demo type
+  // Sync roadmap view with demo type (only when not transitioning)
   useEffect(() => {
-    if (demoType === "admin") {
-      setRoadmapView("admin");
-    } else {
-      setRoadmapView(demoType);
+    if (!isTransitioning) {
+      if (demoType === "admin") {
+        setRoadmapView("admin");
+      } else {
+        setRoadmapView(demoType);
+      }
     }
-  }, [demoType]);
+  }, [demoType, isTransitioning]);
 
   // Handle demo type changes and sync with hero
   const handleDemoTypeChange = (
