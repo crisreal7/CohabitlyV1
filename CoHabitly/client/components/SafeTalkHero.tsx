@@ -307,8 +307,15 @@ export default function SafeTalkHero({
               {chatMessages.map((message, index) => (
                 <div
                   key={index}
-                  className={`flex ${message.type === "user" ? "justify-end" : "justify-start"} animate-fade-in-up`}
-                  style={{ animationDelay: `${index * 0.2}s` }}
+                  className={`flex ${message.type === "user" ? "justify-end" : "justify-start"} ${
+                    message.type === "user"
+                      ? showUserMessage
+                        ? "animate-fade-in-up"
+                        : "opacity-0"
+                      : showAiMessage
+                        ? "animate-fade-in-up"
+                        : "opacity-0"
+                  }`}
                 >
                   <div
                     className={`max-w-xs px-6 py-4 rounded-2xl glass-card-enhanced ${
