@@ -993,11 +993,12 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Admin Dashboard Preview Section */}
-      <section
-        id="admin-section"
-        className="px-6 py-32 relative overflow-hidden glass-section"
-      >
+            {/* Admin Dashboard Preview Section - Only show for student demo */}
+      {demoType === "student" && (
+        <section
+          id="admin-section"
+          className="px-6 py-32 relative overflow-hidden glass-section"
+        >
         {/* Background handled by DynamicBackground component */}
 
         <div className="max-w-7xl mx-auto relative z-10">
