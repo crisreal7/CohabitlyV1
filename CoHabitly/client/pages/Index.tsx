@@ -6,7 +6,7 @@ import InteractiveDemo from "@/components/InteractiveDemo";
 import CouplesDemo from "@/components/CouplesDemo";
 import StudentDemo from "@/components/StudentDemo";
 import HoverScrollContainer from "@/components/HoverScrollContainer";
-import DynamicBackground from "@/components/DynamicBackground";
+import ProgressiveBackground from "@/components/ProgressiveBackground";
 import SafeTalkHero from "@/components/SafeTalkHero";
 import {
   CheckCircle,
@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 
 type RoadmapView = "student" | "admin" | "couples" | "roommate";
+type CurrentSection = "hero" | "demo" | "admin" | "roadmap";
 
 interface RoadmapStage {
   id: string;
@@ -74,6 +75,7 @@ export default function Index() {
     "roommate" | "couples" | "student" | "admin"
   >("roommate");
   const [demoTab, setDemoTab] = useState("overview");
+  const [currentSection, setCurrentSection] = useState<CurrentSection>("hero");
 
   // Update demo tab when demo type changes
   useEffect(() => {
@@ -484,12 +486,35 @@ export default function Index() {
     return () => clearInterval(interval);
   }, []);
 
+  // Track current section based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+
+      if (scrollY < windowHeight * 0.8) {
+        setCurrentSection("hero");
+      } else if (scrollY < windowHeight * 2.2) {
+        setCurrentSection("demo");
+      } else if (scrollY < windowHeight * 3.5) {
+        setCurrentSection("admin");
+      } else {
+        setCurrentSection("roadmap");
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen font-sans relative">
-      {/* Dynamic Animated Background */}
-      <DynamicBackground
-        demoType={demoType === "admin" ? "admin" : demoType}
-        intensity="medium"
+      {/* Progressive Animated Background */}
+      <ProgressiveBackground
+        currentSection={currentSection}
+        heroTheme={demoType === "admin" ? "roommate" : demoType}
       />
 
       {/* SafeTalk Hero Section */}
