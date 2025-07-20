@@ -86,10 +86,10 @@ export default function SafeTalkHero({
       );
       setScrollProgress(progress);
 
-      // Detect user scroll to end animation loop
-      if (window.scrollY > 100 && !hasUserScrolled) {
-        setHasUserScrolled(true);
+      // Break animation loop immediately on any scroll down
+      if (window.scrollY > 50 && animationLoopActive) {
         setAnimationLoopActive(false);
+        setHasUserScrolled(true);
       }
     };
 
@@ -97,7 +97,7 @@ export default function SafeTalkHero({
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasUserScrolled]);
+  }, [animationLoopActive]);
 
   useEffect(() => {
     if (!animationLoopActive) return;
