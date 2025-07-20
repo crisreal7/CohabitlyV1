@@ -993,103 +993,104 @@ export default function Index() {
         </div>
       </section>
 
-            {/* Admin Dashboard Preview Section - Only show for student demo */}
+      {/* Admin Dashboard Preview Section - Only show for student demo */}
       {demoType === "student" && (
         <section
           id="admin-section"
           className="px-6 py-32 relative overflow-hidden glass-section"
         >
-        {/* Background handled by DynamicBackground component */}
+          {/* Background handled by DynamicBackground component */}
 
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/20 rounded-full mb-8 border border-indigo-400/30">
-              <Shield className="w-4 h-4 text-indigo-300" />
-              <span className="text-indigo-200 text-sm font-medium">
-                Admin Dashboard
-              </span>
+          <div className="max-w-7xl mx-auto relative z-10">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/20 rounded-full mb-8 border border-indigo-400/30">
+                <Shield className="w-4 h-4 text-indigo-300" />
+                <span className="text-indigo-200 text-sm font-medium">
+                  Admin Dashboard
+                </span>
+              </div>
+
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
+                Empower Housing
+                <span className="text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text block">
+                  Administrators
+                </span>
+              </h2>
+
+              <p className="text-xl text-indigo-100 mb-12 leading-relaxed font-light max-w-3xl mx-auto">
+                Get real-time insights into dorm harmony, proactive conflict
+                resolution, and data-driven housing decisions.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+                <Button
+                  className="h-14 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={() => window.open("/admin", "_blank")}
+                >
+                  <Shield className="w-5 h-5 mr-2" />
+                  Launch Admin Demo
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-14 px-8 bg-white/10 border-2 border-white/30 text-white hover:bg-white/20 rounded-2xl font-semibold transition-all duration-300"
+                >
+                  <Building className="w-5 h-5 mr-2" />
+                  Request University Demo
+                </Button>
+              </div>
             </div>
 
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
-              Empower Housing
-              <span className="text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text block">
-                Administrators
-              </span>
-            </h2>
+            {/* Admin Features Grid */}
+            <div className="grid md:grid-cols-3 gap-8">
+              <Card className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <BarChart3 className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    Harmony Analytics
+                  </h3>
+                  <p className="text-indigo-200 leading-relaxed">
+                    Real-time dorm health scores, conflict prediction, and
+                    satisfaction trends across your housing portfolio.
+                  </p>
+                </CardContent>
+              </Card>
 
-            <p className="text-xl text-indigo-100 mb-12 leading-relaxed font-light max-w-3xl mx-auto">
-              Get real-time insights into dorm harmony, proactive conflict
-              resolution, and data-driven housing decisions.
-            </p>
+              <Card className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <AlertTriangle className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    Early Intervention
+                  </h3>
+                  <p className="text-indigo-200 leading-relaxed">
+                    AI-powered alerts for tension detection, automated mediation
+                    suggestions, and proactive support workflows.
+                  </p>
+                </CardContent>
+              </Card>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Button
-                className="h-14 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                onClick={() => window.open("/admin", "_blank")}
-              >
-                <Shield className="w-5 h-5 mr-2" />
-                Launch Admin Demo
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-              <Button
-                variant="outline"
-                className="h-14 px-8 bg-white/10 border-2 border-white/30 text-white hover:bg-white/20 rounded-2xl font-semibold transition-all duration-300"
-              >
-                <Building className="w-5 h-5 mr-2" />
-                Request University Demo
-              </Button>
+              <Card className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <Users className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    Smart Matching
+                  </h3>
+                  <p className="text-indigo-200 leading-relaxed">
+                    Advanced compatibility algorithms, preference learning, and
+                    data-driven room assignment optimization.
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           </div>
-
-          {/* Admin Features Grid */}
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <BarChart3 className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">
-                  Harmony Analytics
-                </h3>
-                <p className="text-indigo-200 leading-relaxed">
-                  Real-time dorm health scores, conflict prediction, and
-                  satisfaction trends across your housing portfolio.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <AlertTriangle className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">
-                  Early Intervention
-                </h3>
-                <p className="text-indigo-200 leading-relaxed">
-                  AI-powered alerts for tension detection, automated mediation
-                  suggestions, and proactive support workflows.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Users className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">
-                  Smart Matching
-                </h3>
-                <p className="text-indigo-200 leading-relaxed">
-                  Advanced compatibility algorithms, preference learning, and
-                  data-driven room assignment optimization.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Roadmap Section */}
       <section className="px-6 py-32 relative overflow-hidden glass-section">
