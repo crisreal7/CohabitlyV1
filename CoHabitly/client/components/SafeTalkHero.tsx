@@ -185,12 +185,14 @@ export default function SafeTalkHero({
     const scenario = scenarios[currentScenario];
     setShowCTAs(false);
 
+    // Immediate response
     setTimeout(() => {
       setChatMessages((prev) => [
         ...prev,
         { type: "ai", content: scenario.finalMessage },
       ]);
 
+      // Follow-up message after 2 seconds
       setTimeout(() => {
         setChatMessages((prev) => [
           ...prev,
@@ -201,14 +203,14 @@ export default function SafeTalkHero({
           },
         ]);
 
-        // Wait 5 seconds before continuing animation if still active
+        // Continue animation cycle after 3 seconds if still active
         setTimeout(() => {
           if (animationLoopActive) {
             setCurrentScenario((prev) => (prev + 1) % scenarios.length);
           }
-        }, 5000);
-      }, 2600); // Slowed down by 30%
-    }, 650); // Slowed down by 30%
+        }, 3000);
+      }, 2000);
+    }, 500);
   };
 
   const handleJoinWaitlist = () => {
