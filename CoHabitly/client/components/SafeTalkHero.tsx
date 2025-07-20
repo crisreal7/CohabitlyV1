@@ -13,6 +13,8 @@ interface SafeTalkHeroProps {
   onDemoSelect: (type: "roommate" | "couples" | "student") => void;
   currentDemo: "roommate" | "couples" | "student";
   onScenarioChange?: (type: "roommate" | "couples" | "student") => void;
+  shouldRestartAnimation?: boolean;
+  onAnimationRestarted?: () => void;
 }
 
 interface ChatMessage {
