@@ -563,6 +563,7 @@ export default function Index() {
       <ProgressiveBackground
         currentSection={currentSection}
         heroTheme={demoType === "admin" ? "roommate" : demoType}
+        showAdminSection={demoType === "student"}
       />
 
       {/* SafeTalk Hero Section */}
