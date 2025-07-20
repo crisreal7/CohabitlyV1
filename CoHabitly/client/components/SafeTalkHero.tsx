@@ -154,6 +154,15 @@ export default function SafeTalkHero({
     return () => timeouts.forEach((timeout) => clearTimeout(timeout));
   }, [currentScenario, animationLoopActive]);
 
+  // Handle restart animation from parent
+  useEffect(() => {
+    if (shouldRestartAnimation && !animationLoopActive) {
+      setAnimationLoopActive(true);
+      setHasUserScrolled(false);
+      onAnimationRestarted?.();
+    }
+  }, [shouldRestartAnimation, animationLoopActive, onAnimationRestarted]);
+
   const handleCTAClick = (action: string) => {
     const scenario = scenarios[currentScenario];
     setShowCTAs(false);
