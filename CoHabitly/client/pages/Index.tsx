@@ -559,8 +559,8 @@ export default function Index() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      if (idleTimer) {
-        clearTimeout(idleTimer);
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
       }
     };
   }, [isAtTop]);
