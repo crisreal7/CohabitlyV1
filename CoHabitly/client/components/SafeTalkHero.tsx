@@ -24,6 +24,7 @@ interface ChatMessage {
 export default function SafeTalkHero({
   onDemoSelect,
   currentDemo,
+  onScenarioChange,
 }: SafeTalkHeroProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentScenario, setCurrentScenario] = useState(0);
