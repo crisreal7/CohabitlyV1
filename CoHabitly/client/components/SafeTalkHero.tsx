@@ -132,12 +132,12 @@ export default function SafeTalkHero({
       timeouts.push(setTimeout(action, delay));
     });
 
-    // Auto-cycle every 10.4 seconds (8 seconds * 1.3)
+    // Auto-cycle every 10.4 seconds (8 seconds * 1.3) plus 5 seconds wait after CTAs
     const cycleTimer = setTimeout(() => {
       if (animationLoopActive) {
         setCurrentScenario((prev) => (prev + 1) % scenarios.length);
       }
-    }, 10400);
+    }, 15900); // 10400 + 5500 for the 5-second wait after CTAs
     timeouts.push(cycleTimer);
 
     return () => timeouts.forEach((timeout) => clearTimeout(timeout));
