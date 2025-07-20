@@ -35,6 +35,8 @@ export default function SafeTalkHero({
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [showCTAs, setShowCTAs] = useState(false);
+  const [showUserMessage, setShowUserMessage] = useState(false);
+  const [showAiMessage, setShowAiMessage] = useState(false);
   const [hasUserScrolled, setHasUserScrolled] = useState(false);
   const [animationLoopActive, setAnimationLoopActive] = useState(true);
   const heroRef = useRef<HTMLDivElement>(null);
