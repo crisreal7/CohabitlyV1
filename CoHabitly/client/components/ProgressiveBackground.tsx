@@ -251,7 +251,7 @@ export default function ProgressiveBackground({
 
   return (
     <div
-      className="fixed inset-0 pointer-events-none transition-all duration-1000 ease-in-out"
+      className="fixed inset-0 pointer-events-none transition-all duration-2000 ease-in-out"
       style={{
         backgroundImage: getProgressiveGradient(),
         zIndex: -1,
