@@ -559,7 +559,7 @@ export default function Index() {
 
       {/* SafeTalk Hero Section */}
       <SafeTalkHero
-        onDemoSelect={(type) => setDemoType(type)}
+        onDemoSelect={handleDemoTypeChange}
         currentDemo={demoType === "admin" ? "roommate" : demoType}
         onScenarioChange={(type) => {
           // Only update demo type if user hasn't manually selected one
