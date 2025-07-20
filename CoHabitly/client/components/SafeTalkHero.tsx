@@ -110,30 +110,34 @@ export default function SafeTalkHero({
     // Notify parent of scenario change
     onScenarioChange?.(scenario.type);
 
-    // Slowed down by 30% - increased delays
+    // Strict timing sequence as requested:
+    // 1. Typing bubble pops up, plays for 1.5s, disappears
+    // 2. Half second later: user message pops up
+    // 3. Wait 3 seconds: AI response pops up
+    // 4. Wait 2 seconds: AI button options pop up
     const sequence = [
-      { delay: 650, action: () => setIsTyping(true) },
+      // Step 1: Show typing bubble for 1.5 seconds
+      { delay: 0, action: () => setIsTyping(true) },
+      // Step 2: Hide typing bubble and show user message (after 1.5s + 0.5s)
       {
-        delay: 2600,
+        delay: 2000, // 1500ms typing + 500ms wait
         action: () => {
           setIsTyping(false);
           setChatMessages([{ type: "user", content: scenario.userMessage }]);
         },
       },
-      { delay: 1950, action: () => setIsTyping(true) },
+      // Step 3: Show AI response (after 3 seconds)
       {
-        delay: 3250,
+        delay: 5000, // 2000ms + 3000ms wait
         action: () => {
-          setIsTyping(false);
           setChatMessages((prev) => [
             ...prev,
             { type: "ai", content: scenario.aiResponse },
           ]);
         },
       },
-      { delay: 2300, action: () => setShowCTAs(true) }, // 1 second after AI message (1300 + 1000)
-      // Wait 5 seconds before entering loop
-      { delay: 6500, action: () => {} }, // Just a placeholder for the 5-second wait
+      // Step 4: Show AI button options (after 2 seconds)
+      { delay: 7000, action: () => setShowCTAs(true) }, // 5000ms + 2000ms wait
     ];
 
     const timeouts: NodeJS.Timeout[] = [];
