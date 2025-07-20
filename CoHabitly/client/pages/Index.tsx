@@ -529,12 +529,20 @@ export default function Index() {
         setCurrentSection("roadmap");
       }
 
-      // If user just reached the top, start idle timer
-      if (nowAtTop && !wasAtTop) {
+      // If user is at the top and idle timer isn't running, start it
+      if (nowAtTop && !idleTimer) {
         const timer = setTimeout(() => {
-          setShouldRestartAnimation(true);
+          // Only restart if still at top
+          if (window.scrollY < 100) {
+            setShouldRestartAnimation(true);
+          }
         }, 3000);
         setIdleTimer(timer);
+      }
+
+      // If user scrolled away from top, clear the restart flag
+      if (!nowAtTop && shouldRestartAnimation) {
+        setShouldRestartAnimation(false);
       }
     };
 
