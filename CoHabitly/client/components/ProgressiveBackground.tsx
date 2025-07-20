@@ -13,10 +13,37 @@ export default function ProgressiveBackground({
 
   useEffect(() => {
     const handleScroll = () => {
-      const totalHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
-      const progress = Math.min(window.scrollY / totalHeight, 1);
-      setScrollProgress(progress);
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+
+      // Calculate progress based on viewport heights instead of total document height
+      // This gives more predictable transitions
+      let progress = 0;
+
+      if (scrollY < windowHeight * 0.8) {
+        // Hero section (0-0.8vh)
+        progress = 0.1; // Keep hero theme
+      } else if (scrollY < windowHeight * 2.5) {
+        // Demo section (0.8vh-2.5vh)
+        progress = 0.3; // Still hero theme
+      } else if (scrollY < windowHeight * 4) {
+        // Transition to admin (2.5vh-4vh)
+        const sectionProgress =
+          (scrollY - windowHeight * 2.5) / (windowHeight * 1.5);
+        progress = 0.45 + sectionProgress * 0.25; // 0.45 to 0.7
+      } else if (scrollY < windowHeight * 5.5) {
+        // Admin section (4vh-5.5vh)
+        progress = 0.75; // Admin theme
+      } else {
+        // Roadmap transition (5.5vh+)
+        const sectionProgress = Math.min(
+          (scrollY - windowHeight * 5.5) / (windowHeight * 1.5),
+          1,
+        );
+        progress = 0.85 + sectionProgress * 0.15; // 0.85 to 1.0
+      }
+
+      setScrollProgress(Math.min(progress, 1));
     };
 
     window.addEventListener("scroll", handleScroll);
