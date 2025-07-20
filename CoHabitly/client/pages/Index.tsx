@@ -518,9 +518,9 @@ export default function Index() {
       const windowHeight = window.innerHeight;
 
       // Clear existing idle timer
-      if (idleTimer) {
-        clearTimeout(idleTimer);
-        setIdleTimer(null);
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = null;
       }
 
       const wasAtTop = isAtTop;
