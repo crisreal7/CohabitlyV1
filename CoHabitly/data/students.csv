@@ -1,0 +1,21 @@
+id,name,dorm,room,floor,compatibility_score,profile_completion,status,major,year,sleep_schedule,cleanliness,social_preference,study_habits,communication_style,guest_policy,last_checkin,flagged,roommate_feedback
+1,Jordan Reed,Harrison Hall,247,2,54,78,flagged,Computer Science,Junior,late,medium,introverted,quiet,direct,restricted,2024-11-15,true,-2
+2,Alex Martinez,Harrison Hall,312,3,92,100,active,Psychology,Sophomore,early,high,extroverted,library,collaborative,open,2024-11-16,false,4
+3,Taylor Park,Harrison Hall,304,3,89,95,active,Engineering,Junior,medium,medium,balanced,flexible,friendly,moderate,2024-11-16,false,3
+4,Sarah Kim,Harrison Hall,156,1,96,100,active,Biology,Freshman,early,high,introverted,quiet,polite,restricted,2024-11-16,false,5
+5,Marcus Johnson,Harrison Hall,201,2,67,85,flagged,Business,Sophomore,late,low,extroverted,social,casual,open,2024-11-14,true,1
+6,Emma Davis,Harrison Hall,178,1,88,92,active,Art,Junior,medium,medium,balanced,flexible,creative,moderate,2024-11-16,false,4
+7,Michael Brown,Harrison Hall,289,2,73,88,active,Math,Senior,early,high,introverted,library,focused,restricted,2024-11-15,false,2
+8,Ashley Chen,Harrison Hall,334,3,85,94,active,Chemistry,Sophomore,medium,high,balanced,quiet,helpful,moderate,2024-11-16,false,3
+9,David Wilson,Harrison Hall,245,2,58,76,flagged,History,Junior,late,low,extroverted,social,informal,open,2024-11-13,true,0
+10,Jessica Lopez,Harrison Hall,198,1,91,97,active,English,Senior,early,high,introverted,library,supportive,restricted,2024-11-16,false,4
+11,Ryan Thompson,Kennedy Tower,412,4,76,83,active,Physics,Junior,medium,medium,balanced,focused,technical,moderate,2024-11-16,false,3
+12,Olivia Garcia,Kennedy Tower,387,3,82,90,active,Nursing,Sophomore,early,high,extroverted,group,caring,open,2024-11-16,false,4
+13,Brandon Lee,Kennedy Tower,445,4,69,79,flagged,Music,Senior,late,low,extroverted,social,expressive,open,2024-11-14,true,1
+14,Samantha White,Kennedy Tower,356,3,87,95,active,Pre-Med,Freshman,early,high,introverted,quiet,precise,restricted,2024-11-16,false,5
+15,Kevin Rodriguez,Kennedy Tower,423,4,71,81,active,Economics,Junior,medium,medium,balanced,flexible,analytical,moderate,2024-11-15,false,2
+16,Madison Taylor,Wilson Commons,145,1,93,98,active,Environmental Science,Sophomore,early,high,balanced,outdoor,passionate,moderate,2024-11-16,false,4
+17,Joshua Miller,Wilson Commons,167,1,79,86,active,Political Science,Junior,medium,medium,extroverted,debate,persuasive,open,2024-11-16,false,3
+18,Rachel Green,Wilson Commons,198,1,91,96,active,Psychology,Senior,early,high,introverted,library,empathetic,restricted,2024-11-16,false,5
+19,Tyler Anderson,Wilson Commons,234,2,65,77,flagged,Film Studies,Sophomore,late,low,extroverted,creative,artistic,open,2024-11-13,true,0
+20,Hannah Moore,Wilson Commons,212,2,89,93,active,Education,Junior,medium,high,balanced,group,nurturing,moderate,2024-11-16,false,4

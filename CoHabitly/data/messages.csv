@@ -1,0 +1,21 @@
+id,dorm,floor,message,sentiment_score,flagged,status,timestamp,category,priority,resolved_by
+1,Harrison Hall,2,"Someone's throwing a party in Harrison Hall.",2,true,unreviewed,2024-11-16T14:30:00Z,noise,high,
+2,Harrison Hall,1,"Really appreciate how fair the chore system is. My roommates and I finally found balance!",5,false,resolved,2024-11-15T10:15:00Z,positive,low,admin
+3,Harrison Hall,2,"My roommate never cleans the kitchen and it's getting gross. Not sure how to bring this up.",1,true,unreviewed,2024-11-16T09:45:00Z,cleanliness,medium,
+4,Kennedy Tower,4,"The noise from next door is keeping me up at night. They play music until 2am every night.",1,true,unreviewed,2024-11-16T11:20:00Z,noise,high,
+5,Harrison Hall,3,"Love living here! My roommate and I get along so well. The compatibility matching really works.",5,false,resolved,2024-11-14T16:30:00Z,positive,low,admin
+6,Wilson Commons,2,"Someone keeps eating my food from the shared fridge. It's really frustrating.",2,true,unreviewed,2024-11-16T13:15:00Z,conflict,medium,
+7,Kennedy Tower,3,"My roommate has guests over almost every night. I can't study or sleep properly.",1,true,unreviewed,2024-11-15T20:45:00Z,guests,high,
+8,Harrison Hall,1,"The bathroom hasn't been cleaned in weeks. It's disgusting and unsanitary.",1,true,unreviewed,2024-11-16T08:30:00Z,cleanliness,high,
+9,Wilson Commons,1,"Really happy with my living situation. Everything is going smoothly!",5,false,resolved,2024-11-15T14:20:00Z,positive,low,admin
+10,Harrison Hall,2,"My roommate is always hogging the common area and won't let me use the TV.",2,true,unreviewed,2024-11-16T12:00:00Z,conflict,medium,
+11,Kennedy Tower,4,"The heating in our room doesn't work properly. It's freezing at night.",3,false,maintenance,2024-11-15T22:10:00Z,facilities,medium,facilities
+12,Harrison Hall,3,"Love the anonymous feedback system. It makes it so much easier to address issues.",4,false,resolved,2024-11-14T11:45:00Z,positive,low,admin
+13,Wilson Commons,2,"My roommate smokes in the room despite the no-smoking policy. The smell is awful.",1,true,unreviewed,2024-11-16T15:20:00Z,policy,high,
+14,Kennedy Tower,3,"Could we get better WiFi in the common areas? It's really slow during peak hours.",3,false,resolved,2024-11-15T17:30:00Z,facilities,low,facilities
+15,Harrison Hall,1,"My roommate and I have completely different sleep schedules and it's causing problems.",2,true,unreviewed,2024-11-16T07:45:00Z,lifestyle,medium,
+16,Wilson Commons,1,"The chore rotation system is working great. Everyone is doing their part!",4,false,resolved,2024-11-15T19:15:00Z,positive,low,admin
+17,Kennedy Tower,4,"Loud parties happen too frequently in our building. It's affecting my studies.",2,true,unreviewed,2024-11-16T16:40:00Z,noise,high,
+18,Harrison Hall,2,"My roommate never pays their share of shared expenses on time.",2,true,unreviewed,2024-11-15T21:30:00Z,financial,medium,
+19,Wilson Commons,2,"The community events have been amazing. Great way to meet people!",5,false,resolved,2024-11-14T13:20:00Z,positive,low,admin
+20,Harrison Hall,3,"Someone keeps leaving dirty dishes in the sink for days. It's attracting bugs.",1,true,unreviewed,2024-11-16T10:50:00Z,cleanliness,high,
