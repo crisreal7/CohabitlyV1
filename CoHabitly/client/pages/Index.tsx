@@ -8,6 +8,7 @@ import StudentDemo from "@/components/StudentDemo";
 import HoverScrollContainer from "@/components/HoverScrollContainer";
 import ProgressiveBackground from "@/components/ProgressiveBackground";
 import SafeTalkHero from "@/components/SafeTalkHero";
+import PartnershipSection from "@/components/PartnershipSection";
 import {
   CheckCircle,
   Heart,
