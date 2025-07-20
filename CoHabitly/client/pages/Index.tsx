@@ -100,6 +100,11 @@ export default function Index() {
   ) => {
     setDemoType(newType);
 
+    // Manually sync roadmap view with demo type to prevent infinite loops
+    if (!isTransitioning) {
+      setRoadmapView(newType);
+    }
+
     // If user scrolls back up after changing demo type,
     // we want the hero to reflect the new demo type
     if (currentSection === "hero") {
