@@ -256,7 +256,7 @@ export default function SafeTalkHero({
   return (
     <div
       ref={heroRef}
-      className="min-h-screen relative flex items-center justify-center overflow-hidden transition-all duration-1000"
+      className="min-h-screen relative flex items-center justify-center overflow-hidden transition-all duration-3000 ease-in-out"
       style={{
         backgroundColor: "transparent",
       }}
