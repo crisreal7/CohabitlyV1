@@ -29,6 +29,8 @@ export default function SafeTalkHero({
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [showCTAs, setShowCTAs] = useState(false);
+  const [hasUserScrolled, setHasUserScrolled] = useState(false);
+  const [animationLoopActive, setAnimationLoopActive] = useState(true);
   const heroRef = useRef<HTMLDivElement>(null);
 
   const scenarios = [
@@ -77,32 +79,41 @@ export default function SafeTalkHero({
         Math.min(1, (window.innerHeight - rect.top) / window.innerHeight),
       );
       setScrollProgress(progress);
+
+      // Detect user scroll to end animation loop
+      if (window.scrollY > 100 && !hasUserScrolled) {
+        setHasUserScrolled(true);
+        setAnimationLoopActive(false);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [hasUserScrolled]);
 
   useEffect(() => {
+    if (!animationLoopActive) return;
+
     const scenario = scenarios[currentScenario];
     setChatMessages([]);
     setIsTyping(false);
     setShowCTAs(false);
 
+    // Slowed down by 30% - increased delays
     const sequence = [
-      { delay: 500, action: () => setIsTyping(true) },
+      { delay: 650, action: () => setIsTyping(true) },
       {
-        delay: 2000,
+        delay: 2600,
         action: () => {
           setIsTyping(false);
           setChatMessages([{ type: "user", content: scenario.userMessage }]);
         },
       },
-      { delay: 1500, action: () => setIsTyping(true) },
+      { delay: 1950, action: () => setIsTyping(true) },
       {
-        delay: 2500,
+        delay: 3250,
         action: () => {
           setIsTyping(false);
           setChatMessages((prev) => [
@@ -111,20 +122,26 @@ export default function SafeTalkHero({
           ]);
         },
       },
-      { delay: 1000, action: () => setShowCTAs(true) },
+      { delay: 1300, action: () => setShowCTAs(true) },
+      // Wait 5 seconds before entering loop
+      { delay: 6500, action: () => {} }, // Just a placeholder for the 5-second wait
     ];
 
+    const timeouts: NodeJS.Timeout[] = [];
     sequence.forEach(({ delay, action }) => {
-      setTimeout(action, delay);
+      timeouts.push(setTimeout(action, delay));
     });
 
-    // Auto-cycle every 8 seconds
+    // Auto-cycle every 10.4 seconds (8 seconds * 1.3)
     const cycleTimer = setTimeout(() => {
-      setCurrentScenario((prev) => (prev + 1) % scenarios.length);
-    }, 8000);
+      if (animationLoopActive) {
+        setCurrentScenario((prev) => (prev + 1) % scenarios.length);
+      }
+    }, 10400);
+    timeouts.push(cycleTimer);
 
-    return () => clearTimeout(cycleTimer);
-  }, [currentScenario]);
+    return () => timeouts.forEach((timeout) => clearTimeout(timeout));
+  }, [currentScenario, animationLoopActive]);
 
   const handleCTAClick = (action: string) => {
     const scenario = scenarios[currentScenario];
@@ -146,11 +163,21 @@ export default function SafeTalkHero({
           },
         ]);
 
+        // Wait 5 seconds before continuing animation if still active
         setTimeout(() => {
-          setCurrentScenario((prev) => (prev + 1) % scenarios.length);
-        }, 2000);
-      }, 2000);
-    }, 500);
+          if (animationLoopActive) {
+            setCurrentScenario((prev) => (prev + 1) % scenarios.length);
+          }
+        }, 5000);
+      }, 2600); // Slowed down by 30%
+    }, 650); // Slowed down by 30%
+  };
+
+  const handleJoinWaitlist = () => {
+    const footer = document.getElementById("early-access-section");
+    if (footer) {
+      footer.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const currentScenarioData = scenarios[currentScenario];
@@ -224,7 +251,7 @@ export default function SafeTalkHero({
                     className={`max-w-xs px-6 py-4 rounded-2xl glass-card-enhanced ${
                       message.type === "user"
                         ? "bg-white/90 text-gray-900"
-                        : "bg-white/20 text-white border border-white/30"
+                        : "bg-white/95 text-gray-900 border border-white/30"
                     }`}
                   >
                     <p className="text-sm font-medium">{message.content}</p>
@@ -292,39 +319,25 @@ export default function SafeTalkHero({
 
             <div className="flex flex-col gap-4 w-full max-w-sm">
               <Button
-                onClick={() => onDemoSelect("roommate")}
-                className={`h-16 px-8 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 button-feedback ${
-                  currentDemo === "roommate"
-                    ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
-                    : "bg-white/20 text-white hover:bg-white/30 border border-white/30"
-                }`}
+                onClick={() => {
+                  const demoSection =
+                    document.getElementById("interactive-demo");
+                  if (demoSection) {
+                    demoSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className="h-16 px-8 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 button-feedback bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
               >
                 <Users className="w-5 h-5 mr-3" />
-                Roommate Demo
+                Try Demo
               </Button>
 
               <Button
-                onClick={() => onDemoSelect("couples")}
-                className={`h-16 px-8 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 button-feedback ${
-                  currentDemo === "couples"
-                    ? "bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white"
-                    : "bg-white/20 text-white hover:bg-white/30 border border-white/30"
-                }`}
+                onClick={handleJoinWaitlist}
+                className="h-16 px-8 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 button-feedback bg-white/20 text-white hover:bg-white/30 border border-white/30"
               >
                 <Heart className="w-5 h-5 mr-3" />
-                Couples Demo
-              </Button>
-
-              <Button
-                onClick={() => onDemoSelect("student")}
-                className={`h-16 px-8 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 button-feedback ${
-                  currentDemo === "student"
-                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
-                    : "bg-white/20 text-white hover:bg-white/30 border border-white/30"
-                }`}
-              >
-                <GraduationCap className="w-5 h-5 mr-3" />
-                Student Demo
+                Join Wait List
               </Button>
             </div>
 
