@@ -103,6 +103,9 @@ export default function SafeTalkHero({
     setIsTyping(false);
     setShowCTAs(false);
 
+    // Notify parent of scenario change
+    onScenarioChange?.(scenario.type);
+
     // Slowed down by 30% - increased delays
     const sequence = [
       { delay: 650, action: () => setIsTyping(true) },
