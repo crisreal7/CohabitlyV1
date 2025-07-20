@@ -305,7 +305,7 @@ export default function SafeTalkHero({
                   style={{ animationDelay: `${index * 0.2}s` }}
                 >
                   <div
-                    className={`max-w-xs px-6 py-4 rounded-2xl glass-card-enhanced animate-fade-in-up ${
+                    className={`max-w-xs px-6 py-4 rounded-2xl glass-card-enhanced ${
                       message.type === "user"
                         ? "bg-white/90 text-gray-900"
                         : "bg-white/95 text-gray-900 border border-white/30"
