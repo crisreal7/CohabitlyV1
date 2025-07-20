@@ -1103,6 +1103,11 @@ export default function Index() {
         </section>
       )}
 
+      {/* Partnership Section */}
+      <PartnershipSection
+        currentDemoType={demoType === "admin" ? "roommate" : demoType}
+      />
+
       {/* Roadmap Section */}
       <section className="px-6 py-32 relative overflow-hidden glass-section">
         {/* Background handled by DynamicBackground component */}
