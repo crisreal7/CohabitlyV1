@@ -76,7 +76,7 @@ export default function Index() {
   >("roommate");
   const [demoTab, setDemoTab] = useState("overview");
   const [currentSection, setCurrentSection] = useState<CurrentSection>("hero");
-  const [isAtTop, setIsAtTop] = useState(true);
+  const isAtTopRef = useRef(true);
   const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [shouldRestartAnimation, setShouldRestartAnimation] = useState(false);
 
