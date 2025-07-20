@@ -69,7 +69,7 @@ export default function PartnershipSection({
   const offerCards: OfferCard[] = [
     {
       userType: "student",
-      title: "Tired of instant noodles?",
+      title: "Move In, Feel at Home",
       subtitle: "Dorm Essentials by IKEA",
       brandName: "IKEA",
       offerDescription:
