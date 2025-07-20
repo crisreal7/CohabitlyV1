@@ -1034,17 +1034,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Extended Seamless Gradient Transition to Roadmap */}
-      <section className="min-h-screen py-32 admin-to-roadmap-gradient relative overflow-hidden">
-        {/* Continuing floating elements from admin theme */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-80 h-80 bg-blue-200/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-indigo-500/8 rounded-full blur-2xl animate-pulse delay-500"></div>
-          <div className="absolute top-2/3 right-1/3 w-40 h-40 bg-gray-300/10 rounded-full blur-2xl animate-pulse delay-300"></div>
-        </div>
-      </section>
-
       {/* Roadmap Section */}
       <section className="px-6 py-32 relative overflow-hidden glass-section">
         {/* Background handled by DynamicBackground component */}
