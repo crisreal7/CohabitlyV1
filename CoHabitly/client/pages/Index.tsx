@@ -91,6 +91,15 @@ export default function Index() {
     }
   }, [demoType]);
 
+  // Sync roadmap view with demo type
+  useEffect(() => {
+    if (demoType === "admin") {
+      setRoadmapView("admin");
+    } else {
+      setRoadmapView(demoType);
+    }
+  }, [demoType]);
+
   // Handle demo type changes and sync with hero
   const handleDemoTypeChange = (
     newType: "roommate" | "couples" | "student",
