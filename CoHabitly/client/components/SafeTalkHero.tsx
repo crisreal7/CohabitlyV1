@@ -184,7 +184,7 @@ export default function SafeTalkHero({
         return next;
       });
     }
-  }, [shouldRestartAnimation, onAnimationRestarted]);
+  }, [shouldRestartAnimation]);
 
   // Force animation to restart when animationLoopActive becomes true again
   useEffect(() => {
