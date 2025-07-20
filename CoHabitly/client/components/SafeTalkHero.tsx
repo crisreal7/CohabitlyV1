@@ -12,6 +12,9 @@ import {
 interface SafeTalkHeroProps {
   onDemoSelect: (type: "roommate" | "couples" | "student") => void;
   currentDemo: "roommate" | "couples" | "student";
+  onScenarioChange?: (type: "roommate" | "couples" | "student") => void;
+  shouldRestartAnimation?: boolean;
+  onAnimationRestarted?: () => void;
 }
 
 interface ChatMessage {
@@ -23,12 +26,19 @@ interface ChatMessage {
 export default function SafeTalkHero({
   onDemoSelect,
   currentDemo,
+  onScenarioChange,
+  shouldRestartAnimation = false,
+  onAnimationRestarted,
 }: SafeTalkHeroProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentScenario, setCurrentScenario] = useState(0);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [showCTAs, setShowCTAs] = useState(false);
+  const [showUserMessage, setShowUserMessage] = useState(false);
+  const [showAiMessage, setShowAiMessage] = useState(false);
+  const [hasUserScrolled, setHasUserScrolled] = useState(false);
+  const [animationLoopActive, setAnimationLoopActive] = useState(true);
   const heroRef = useRef<HTMLDivElement>(null);
 
   const scenarios = [
@@ -77,65 +87,149 @@ export default function SafeTalkHero({
         Math.min(1, (window.innerHeight - rect.top) / window.innerHeight),
       );
       setScrollProgress(progress);
+
+      // Break animation loop immediately on any scroll down
+      if (window.scrollY > 50 && animationLoopActive) {
+        setAnimationLoopActive(false);
+        setHasUserScrolled(true);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [animationLoopActive]);
 
   useEffect(() => {
+    if (!animationLoopActive) return;
+
     const scenario = scenarios[currentScenario];
     setChatMessages([]);
     setIsTyping(false);
     setShowCTAs(false);
+    setShowUserMessage(false);
+    setShowAiMessage(false);
 
+    // Notify parent of scenario change
+    onScenarioChange?.(scenario.type);
+
+    // Strict timing sequence as requested:
+    // 1. Typing bubble pops up, plays for 1.5s, disappears
+    // 2. Half second later: user message pops up
+    // 3. Wait 3 seconds: AI response pops up
+    // 4. Wait 2 seconds: AI button options pop up
     const sequence = [
-      { delay: 500, action: () => setIsTyping(true) },
+      // Step 1: Show typing bubble for 1.5 seconds
+      { delay: 0, action: () => setIsTyping(true) },
+      // Step 2: Hide typing bubble and show user message (after 1.5s + 0.5s)
       {
-        delay: 2000,
+        delay: 2000, // 1500ms typing + 500ms wait
         action: () => {
           setIsTyping(false);
           setChatMessages([{ type: "user", content: scenario.userMessage }]);
+          setShowUserMessage(true);
         },
       },
-      { delay: 1500, action: () => setIsTyping(true) },
+      // Step 3: Show AI response (after 3 seconds)
       {
-        delay: 2500,
+        delay: 5000, // 2000ms + 3000ms wait
         action: () => {
-          setIsTyping(false);
           setChatMessages((prev) => [
             ...prev,
             { type: "ai", content: scenario.aiResponse },
           ]);
+          setShowAiMessage(true);
         },
       },
-      { delay: 1000, action: () => setShowCTAs(true) },
+      // Step 4: Show AI button options (after 2 seconds)
+      { delay: 7000, action: () => setShowCTAs(true) }, // 5000ms + 2000ms wait
     ];
 
+    const timeouts: NodeJS.Timeout[] = [];
     sequence.forEach(({ delay, action }) => {
-      setTimeout(action, delay);
+      timeouts.push(setTimeout(action, delay));
     });
 
-    // Auto-cycle every 8 seconds
+    // Auto-cycle: 7s for full sequence + 3s display time = 10s total
     const cycleTimer = setTimeout(() => {
-      setCurrentScenario((prev) => (prev + 1) % scenarios.length);
-    }, 8000);
+      if (animationLoopActive) {
+        const nextScenario = (currentScenario + 1) % scenarios.length;
+        setCurrentScenario(nextScenario);
+        onScenarioChange?.(scenarios[nextScenario].type);
+      }
+    }, 10000); // 7000ms sequence + 3000ms display time
+    timeouts.push(cycleTimer);
 
-    return () => clearTimeout(cycleTimer);
-  }, [currentScenario]);
+    return () => timeouts.forEach((timeout) => clearTimeout(timeout));
+  }, [currentScenario, animationLoopActive]);
+
+  // Handle restart animation from parent
+  useEffect(() => {
+    if (shouldRestartAnimation) {
+      // Reset all states and restart the animation
+      setAnimationLoopActive(true);
+      setHasUserScrolled(false);
+      setChatMessages([]);
+      setIsTyping(false);
+      setShowCTAs(false);
+      setShowUserMessage(false);
+      setShowAiMessage(false);
+      onAnimationRestarted?.();
+
+      // Trigger a new animation sequence by forcing the scenario to update
+      // This will cause the animation useEffect to run again
+      setCurrentScenario((prev) => {
+        const next = prev; // Keep same scenario but force re-render
+        return next;
+      });
+    }
+  }, [shouldRestartAnimation]);
+
+  // Force animation to restart when animationLoopActive becomes true again
+  useEffect(() => {
+    if (
+      animationLoopActive &&
+      hasUserScrolled === false &&
+      chatMessages.length === 0
+    ) {
+      // This is a restart scenario - force the animation to begin
+      const scenario = scenarios[currentScenario];
+      onScenarioChange?.(scenario.type);
+    }
+  }, [
+    animationLoopActive,
+    hasUserScrolled,
+    chatMessages.length,
+    currentScenario,
+  ]);
+
+  // Sync scenario with currentDemo when demo selection changes externally
+  useEffect(() => {
+    const targetScenarioIndex = scenarios.findIndex(
+      (s) => s.type === currentDemo,
+    );
+    if (
+      targetScenarioIndex !== -1 &&
+      targetScenarioIndex !== currentScenario &&
+      !animationLoopActive
+    ) {
+      setCurrentScenario(targetScenarioIndex);
+    }
+  }, [currentDemo, currentScenario, animationLoopActive]);
 
   const handleCTAClick = (action: string) => {
     const scenario = scenarios[currentScenario];
     setShowCTAs(false);
 
+    // Immediate response
     setTimeout(() => {
       setChatMessages((prev) => [
         ...prev,
         { type: "ai", content: scenario.finalMessage },
       ]);
 
+      // Follow-up message after 2 seconds
       setTimeout(() => {
         setChatMessages((prev) => [
           ...prev,
@@ -146,11 +240,21 @@ export default function SafeTalkHero({
           },
         ]);
 
+        // Continue animation cycle after 3 seconds if still active
         setTimeout(() => {
-          setCurrentScenario((prev) => (prev + 1) % scenarios.length);
-        }, 2000);
+          if (animationLoopActive) {
+            setCurrentScenario((prev) => (prev + 1) % scenarios.length);
+          }
+        }, 3000);
       }, 2000);
     }, 500);
+  };
+
+  const handleJoinWaitlist = () => {
+    const footer = document.getElementById("early-access-section");
+    if (footer) {
+      footer.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const currentScenarioData = scenarios[currentScenario];
@@ -158,31 +262,17 @@ export default function SafeTalkHero({
   return (
     <div
       ref={heroRef}
-      className="min-h-screen relative flex items-center justify-center overflow-hidden"
+      className="min-h-screen relative flex items-center justify-center overflow-hidden transition-all duration-3000 ease-in-out"
       style={{
-        background: `linear-gradient(135deg, 
-          ${
-            currentScenarioData.type === "couples"
-              ? "hsl(350, 82%, 82%)"
-              : currentScenarioData.type === "roommate"
-                ? "hsl(217, 91%, 60%)"
-                : "hsl(142, 70%, 45%)"
-          } 0%, 
-          ${
-            currentScenarioData.type === "couples"
-              ? "hsl(340, 70%, 70%)"
-              : currentScenarioData.type === "roommate"
-                ? "hsl(200, 85%, 50%)"
-                : "hsl(160, 75%, 35%)"
-          } 100%)`,
+        backgroundColor: "transparent",
       }}
     >
-      {/* Background Elements */}
+      {/* Background Elements with gradual color transitions */}
       <div className="absolute inset-0">
         {Array.from({ length: 6 }, (_, i) => (
           <div
             key={i}
-            className={`absolute rounded-full blur-3xl animate-float ${
+            className={`absolute rounded-full blur-3xl animate-float transition-all duration-3000 ease-in-out ${
               currentScenarioData.type === "couples"
                 ? "bg-rose-300/20"
                 : currentScenarioData.type === "roommate"
@@ -195,7 +285,7 @@ export default function SafeTalkHero({
               width: `${200 + i * 50}px`,
               height: `${200 + i * 50}px`,
               animationDelay: `${i * 0.5}s`,
-              animationDuration: `${4 + i}s`,
+              animationDuration: `${(4 + i) * 1.3}s`,
             }}
           />
         ))}
@@ -217,14 +307,21 @@ export default function SafeTalkHero({
               {chatMessages.map((message, index) => (
                 <div
                   key={index}
-                  className={`flex ${message.type === "user" ? "justify-end" : "justify-start"} animate-fade-in-up`}
-                  style={{ animationDelay: `${index * 0.2}s` }}
+                  className={`flex ${message.type === "user" ? "justify-end" : "justify-start"} ${
+                    message.type === "user"
+                      ? showUserMessage
+                        ? "animate-fade-in-up"
+                        : "opacity-0"
+                      : showAiMessage
+                        ? "animate-fade-in-up"
+                        : "opacity-0"
+                  }`}
                 >
                   <div
                     className={`max-w-xs px-6 py-4 rounded-2xl glass-card-enhanced ${
                       message.type === "user"
                         ? "bg-white/90 text-gray-900"
-                        : "bg-white/20 text-white border border-white/30"
+                        : "bg-white/95 text-gray-900 border border-white/30"
                     }`}
                   >
                     <p className="text-sm font-medium">{message.content}</p>
@@ -292,39 +389,25 @@ export default function SafeTalkHero({
 
             <div className="flex flex-col gap-4 w-full max-w-sm">
               <Button
-                onClick={() => onDemoSelect("roommate")}
-                className={`h-16 px-8 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 button-feedback ${
-                  currentDemo === "roommate"
-                    ? "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
-                    : "bg-white/20 text-white hover:bg-white/30 border border-white/30"
-                }`}
+                onClick={() => {
+                  const demoSection =
+                    document.getElementById("interactive-demo");
+                  if (demoSection) {
+                    demoSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className="h-16 px-8 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 button-feedback bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
               >
                 <Users className="w-5 h-5 mr-3" />
-                Roommate Demo
+                Try Demo
               </Button>
 
               <Button
-                onClick={() => onDemoSelect("couples")}
-                className={`h-16 px-8 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 button-feedback ${
-                  currentDemo === "couples"
-                    ? "bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white"
-                    : "bg-white/20 text-white hover:bg-white/30 border border-white/30"
-                }`}
+                onClick={handleJoinWaitlist}
+                className="h-16 px-8 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 button-feedback bg-white/20 text-white hover:bg-white/30 border border-white/30"
               >
                 <Heart className="w-5 h-5 mr-3" />
-                Couples Demo
-              </Button>
-
-              <Button
-                onClick={() => onDemoSelect("student")}
-                className={`h-16 px-8 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 button-feedback ${
-                  currentDemo === "student"
-                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
-                    : "bg-white/20 text-white hover:bg-white/30 border border-white/30"
-                }`}
-              >
-                <GraduationCap className="w-5 h-5 mr-3" />
-                Student Demo
+                Join Wait List
               </Button>
             </div>
 

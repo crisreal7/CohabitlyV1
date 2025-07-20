@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,8 +6,9 @@ import InteractiveDemo from "@/components/InteractiveDemo";
 import CouplesDemo from "@/components/CouplesDemo";
 import StudentDemo from "@/components/StudentDemo";
 import HoverScrollContainer from "@/components/HoverScrollContainer";
-import DynamicBackground from "@/components/DynamicBackground";
+import ProgressiveBackground from "@/components/ProgressiveBackground";
 import SafeTalkHero from "@/components/SafeTalkHero";
+import PartnershipSection from "@/components/PartnershipSection";
 import {
   CheckCircle,
   Heart,
@@ -38,6 +39,7 @@ import {
 } from "lucide-react";
 
 type RoadmapView = "student" | "admin" | "couples" | "roommate";
+type CurrentSection = "hero" | "demo" | "admin" | "roadmap";
 
 interface RoadmapStage {
   id: string;
@@ -74,6 +76,10 @@ export default function Index() {
     "roommate" | "couples" | "student" | "admin"
   >("roommate");
   const [demoTab, setDemoTab] = useState("overview");
+  const [currentSection, setCurrentSection] = useState<CurrentSection>("hero");
+  const isAtTopRef = useRef(true);
+  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [shouldRestartAnimation, setShouldRestartAnimation] = useState(false);
 
   // Update demo tab when demo type changes
   useEffect(() => {
@@ -85,6 +91,28 @@ export default function Index() {
       setDemoTab("overview");
     }
   }, [demoType]);
+
+  // Note: Removed automatic roadmapView sync to prevent infinite loops
+  // Roadmap view will be controlled manually through user interactions and handleDemoTypeChange
+
+  // Handle demo type changes and sync with hero
+  const handleDemoTypeChange = (
+    newType: "roommate" | "couples" | "student",
+  ) => {
+    setDemoType(newType);
+
+    // Manually sync roadmap view with demo type to prevent infinite loops
+    if (!isTransitioning) {
+      setRoadmapView(newType);
+    }
+
+    // If user scrolls back up after changing demo type,
+    // we want the hero to reflect the new demo type
+    if (currentSection === "hero") {
+      // Force hero to update to match the selected demo
+      // This will be handled by the SafeTalkHero component's scenario matching
+    }
+  };
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const handleEmailSubmit = (e: React.FormEvent) => {
@@ -99,10 +127,11 @@ export default function Index() {
     if (view === roadmapView || isTransitioning) return;
     setIsTransitioning(true);
 
-    // Update demo type to match roadmap view
+    // Update demo type to match roadmap view (this is manual user selection)
     if (view === "admin") {
       setDemoType("admin");
-    } else if (view !== "admin" && demoType === "admin") {
+    } else {
+      // Always update demoType for non-admin views to ensure background changes
       setDemoType(view as "roommate" | "couples" | "student");
     }
 
@@ -484,18 +513,81 @@ export default function Index() {
     return () => clearInterval(interval);
   }, []);
 
+  // Track current section based on scroll position and handle idle detection
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+
+      // Clear existing idle timer
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = null;
+      }
+
+      const wasAtTop = isAtTopRef.current;
+      const nowAtTop = scrollY < 100;
+      isAtTopRef.current = nowAtTop;
+
+      if (scrollY < windowHeight * 0.8) {
+        setCurrentSection("hero");
+      } else if (scrollY < windowHeight * 2.2) {
+        setCurrentSection("demo");
+      } else if (scrollY < windowHeight * 3.5) {
+        setCurrentSection("admin");
+      } else {
+        setCurrentSection("roadmap");
+      }
+
+      // If user is at the top and idle timer isn't running, start it
+      if (nowAtTop && !idleTimerRef.current) {
+        const timer = setTimeout(() => {
+          // Only restart if still at top
+          if (window.scrollY < 100) {
+            setShouldRestartAnimation(true);
+          }
+        }, 3000);
+        idleTimerRef.current = timer;
+      }
+
+      // If user scrolled away from top, clear the restart flag
+      if (!nowAtTop && shouldRestartAnimation) {
+        setShouldRestartAnimation(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className="min-h-screen font-sans relative">
-      {/* Dynamic Animated Background */}
-      <DynamicBackground
-        demoType={demoType === "admin" ? "admin" : demoType}
-        intensity="medium"
+      {/* Progressive Animated Background */}
+      <ProgressiveBackground
+        currentSection={currentSection}
+        heroTheme={demoType === "admin" ? "roommate" : demoType}
+        showAdminSection={demoType === "student"}
       />
 
       {/* SafeTalk Hero Section */}
       <SafeTalkHero
-        onDemoSelect={(type) => setDemoType(type)}
+        onDemoSelect={handleDemoTypeChange}
         currentDemo={demoType === "admin" ? "roommate" : demoType}
+        onScenarioChange={(type) => {
+          // Only update demo type if user hasn't manually selected one
+          if (currentSection === "hero") {
+            setDemoType(type);
+          }
+        }}
+        shouldRestartAnimation={shouldRestartAnimation}
+        onAnimationRestarted={() => setShouldRestartAnimation(false)}
       />
       {/* Interactive Demo Section */}
       <section
@@ -563,7 +655,7 @@ export default function Index() {
                         : "bg-white/20 text-blue-100 hover:bg-white/30"
                     }`}
                     onClick={() => {
-                      setDemoType("roommate");
+                      handleDemoTypeChange("roommate");
                       const demoPhone = document.querySelector(".demo-phone");
                       if (demoPhone) {
                         demoPhone.scrollIntoView({
@@ -583,7 +675,7 @@ export default function Index() {
                         : "bg-white/20 text-blue-100 hover:bg-white/30"
                     }`}
                     onClick={() => {
-                      setDemoType("couples");
+                      handleDemoTypeChange("couples");
                       const demoPhone = document.querySelector(".demo-phone");
                       if (demoPhone) {
                         demoPhone.scrollIntoView({
@@ -603,7 +695,7 @@ export default function Index() {
                         : "bg-white/20 text-blue-100 hover:bg-white/30"
                     }`}
                     onClick={() => {
-                      setDemoType("student");
+                      handleDemoTypeChange("student");
                       const demoPhone = document.querySelector(".demo-phone");
                       if (demoPhone) {
                         demoPhone.scrollIntoView({
@@ -912,148 +1004,109 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Extended Seamless Gradient Transition to Admin Dashboard */}
-      <section
-        className={`min-h-screen py-32 transition-all duration-1000 ease-in-out relative overflow-hidden ${
-          demoType === "couples"
-            ? "couples-to-admin-gradient"
-            : demoType === "student"
-              ? "student-to-admin-gradient"
-              : "roommate-to-admin-gradient"
-        }`}
-      >
-        {/* Continuing floating elements for seamless blend */}
-        <div className="absolute inset-0">
-          <div
-            className={`absolute top-20 left-10 w-96 h-96 rounded-full blur-3xl animate-pulse transition-all duration-1000 ${
-              demoType === "couples"
-                ? "bg-rose-500/15"
-                : demoType === "student"
-                  ? "bg-emerald-500/15"
-                  : "bg-blue-500/15"
-            }`}
-          ></div>
-          <div className="absolute bottom-20 right-10 w-80 h-80 bg-purple-500/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div
-            className={`absolute top-1/2 left-1/3 w-64 h-64 rounded-full blur-2xl animate-pulse delay-500 transition-all duration-1000 ${
-              demoType === "couples"
-                ? "bg-pink-500/15"
-                : demoType === "student"
-                  ? "bg-teal-500/15"
-                  : "bg-indigo-500/15"
-            }`}
-          ></div>
-          <div className="absolute top-1/3 right-1/4 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl animate-pulse delay-700"></div>
-        </div>
-      </section>
+      {/* Admin Dashboard Preview Section - Only show for student demo */}
+      {demoType === "student" && (
+        <section
+          id="admin-section"
+          className="px-6 py-32 relative overflow-hidden glass-section"
+        >
+          {/* Background handled by DynamicBackground component */}
 
-      {/* Admin Dashboard Preview Section */}
-      <section
-        id="admin-section"
-        className="px-6 py-32 relative overflow-hidden glass-section"
-      >
-        {/* Background handled by DynamicBackground component */}
+          <div className="max-w-7xl mx-auto relative z-10">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/20 rounded-full mb-8 border border-indigo-400/30">
+                <Shield className="w-4 h-4 text-indigo-300" />
+                <span className="text-indigo-200 text-sm font-medium">
+                  Admin Dashboard
+                </span>
+              </div>
 
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/20 rounded-full mb-8 border border-indigo-400/30">
-              <Shield className="w-4 h-4 text-indigo-300" />
-              <span className="text-indigo-200 text-sm font-medium">
-                Admin Dashboard
-              </span>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
+                Empower Housing
+                <span className="text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text block">
+                  Administrators
+                </span>
+              </h2>
+
+              <p className="text-xl text-indigo-100 mb-12 leading-relaxed font-light max-w-3xl mx-auto">
+                Get real-time insights into dorm harmony, proactive conflict
+                resolution, and data-driven housing decisions.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+                <Button
+                  className="h-14 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={() => window.open("/admin", "_blank")}
+                >
+                  <Shield className="w-5 h-5 mr-2" />
+                  Launch Admin Demo
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-14 px-8 bg-white/10 border-2 border-white/30 text-white hover:bg-white/20 rounded-2xl font-semibold transition-all duration-300"
+                >
+                  <Building className="w-5 h-5 mr-2" />
+                  Request University Demo
+                </Button>
+              </div>
             </div>
 
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
-              Empower Housing
-              <span className="text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text block">
-                Administrators
-              </span>
-            </h2>
+            {/* Admin Features Grid */}
+            <div className="grid md:grid-cols-3 gap-8">
+              <Card className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <BarChart3 className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    Harmony Analytics
+                  </h3>
+                  <p className="text-indigo-200 leading-relaxed">
+                    Real-time dorm health scores, conflict prediction, and
+                    satisfaction trends across your housing portfolio.
+                  </p>
+                </CardContent>
+              </Card>
 
-            <p className="text-xl text-indigo-100 mb-12 leading-relaxed font-light max-w-3xl mx-auto">
-              Get real-time insights into dorm harmony, proactive conflict
-              resolution, and data-driven housing decisions.
-            </p>
+              <Card className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <AlertTriangle className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    Early Intervention
+                  </h3>
+                  <p className="text-indigo-200 leading-relaxed">
+                    AI-powered alerts for tension detection, automated mediation
+                    suggestions, and proactive support workflows.
+                  </p>
+                </CardContent>
+              </Card>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Button
-                className="h-14 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                onClick={() => window.open("/admin", "_blank")}
-              >
-                <Shield className="w-5 h-5 mr-2" />
-                Launch Admin Demo
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-              <Button
-                variant="outline"
-                className="h-14 px-8 bg-white/10 border-2 border-white/30 text-white hover:bg-white/20 rounded-2xl font-semibold transition-all duration-300"
-              >
-                <Building className="w-5 h-5 mr-2" />
-                Request University Demo
-              </Button>
+              <Card className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <Users className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">
+                    Smart Matching
+                  </h3>
+                  <p className="text-indigo-200 leading-relaxed">
+                    Advanced compatibility algorithms, preference learning, and
+                    data-driven room assignment optimization.
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           </div>
+        </section>
+      )}
 
-          {/* Admin Features Grid */}
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <BarChart3 className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">
-                  Harmony Analytics
-                </h3>
-                <p className="text-indigo-200 leading-relaxed">
-                  Real-time dorm health scores, conflict prediction, and
-                  satisfaction trends across your housing portfolio.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <AlertTriangle className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">
-                  Early Intervention
-                </h3>
-                <p className="text-indigo-200 leading-relaxed">
-                  AI-powered alerts for tension detection, automated mediation
-                  suggestions, and proactive support workflows.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Users className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">
-                  Smart Matching
-                </h3>
-                <p className="text-indigo-200 leading-relaxed">
-                  Advanced compatibility algorithms, preference learning, and
-                  data-driven room assignment optimization.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Extended Seamless Gradient Transition to Roadmap */}
-      <section className="min-h-screen py-32 admin-to-roadmap-gradient relative overflow-hidden">
-        {/* Continuing floating elements from admin theme */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-80 h-80 bg-blue-200/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-indigo-500/8 rounded-full blur-2xl animate-pulse delay-500"></div>
-          <div className="absolute top-2/3 right-1/3 w-40 h-40 bg-gray-300/10 rounded-full blur-2xl animate-pulse delay-300"></div>
-        </div>
-      </section>
+      {/* Partnership Section */}
+      <PartnershipSection
+        currentDemoType={demoType === "admin" ? "roommate" : demoType}
+      />
 
       {/* Roadmap Section */}
       <section className="px-6 py-32 relative overflow-hidden glass-section">
@@ -1061,16 +1114,48 @@ export default function Index() {
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-full mb-8">
-              <TrendingUp className="w-4 h-4 text-blue-600" />
-              <span className="text-blue-700 text-sm font-medium">
+            <div
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 transition-all duration-2000 ease-in-out ${
+                demoType === "couples"
+                  ? "bg-rose-100"
+                  : demoType === "student"
+                    ? "bg-emerald-100"
+                    : "bg-blue-100"
+              }`}
+            >
+              <TrendingUp
+                className={`w-4 h-4 transition-all duration-2000 ease-in-out ${
+                  demoType === "couples"
+                    ? "text-rose-600"
+                    : demoType === "student"
+                      ? "text-emerald-600"
+                      : "text-blue-600"
+                }`}
+              />
+              <span
+                className={`text-sm font-medium transition-all duration-2000 ease-in-out ${
+                  demoType === "couples"
+                    ? "text-rose-700"
+                    : demoType === "student"
+                      ? "text-emerald-700"
+                      : "text-blue-700"
+                }`}
+              >
                 Product Roadmap
               </span>
             </div>
 
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8 leading-tight">
               The Journey to Better
-              <span className="text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text block">
+              <span
+                className={`text-transparent bg-clip-text block transition-all duration-2000 ease-in-out ${
+                  demoType === "couples"
+                    ? "bg-gradient-to-r from-rose-500 to-pink-600 animate-pulse"
+                    : demoType === "student"
+                      ? "bg-gradient-to-r from-emerald-500 to-teal-600 animate-pulse"
+                      : "bg-gradient-to-r from-blue-500 to-indigo-600 animate-pulse"
+                }`}
+              >
                 Shared Living
               </span>
             </h2>

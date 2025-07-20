@@ -293,7 +293,7 @@
 }
 
 .animate-float {
-  animation: float 3s ease-in-out infinite;
+  animation: float 3.9s ease-in-out infinite;
 }
 
 .animate-glow {
@@ -889,9 +889,7 @@
 
 /* Glass sections for dynamic background compatibility */
 .glass-section {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
   position: relative;
   z-index: 10;
 }
@@ -1170,13 +1168,13 @@
     transform: translateY(0px) translateX(0px) rotate(0deg);
   }
   25% {
-    transform: translateY(-10px) translateX(5px) rotate(90deg);
+    transform: translateY(-15px) translateX(8px) rotate(90deg);
   }
   50% {
-    transform: translateY(-5px) translateX(-5px) rotate(180deg);
+    transform: translateY(-8px) translateX(-8px) rotate(180deg);
   }
   75% {
-    transform: translateY(-15px) translateX(10px) rotate(270deg);
+    transform: translateY(-20px) translateX(12px) rotate(270deg);
   }
   100% {
     transform: translateY(0px) translateX(0px) rotate(360deg);
@@ -1184,7 +1182,31 @@
 }
 
 .animate-float-complex {
-  animation: float-complex 8s ease-in-out infinite;
+  animation: float-complex 12s ease-in-out infinite;
+}
+
+/* Extended gradient shift for smoother background transitions */
+@keyframes gradient-shift-extended {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 25%;
+  }
+  50% {
+    background-position: 200% 50%;
+  }
+  75% {
+    background-position: 300% 75%;
+  }
+  100% {
+    background-position: 400% 50%;
+  }
+}
+
+.animate-gradient-shift-extended {
+  background-size: 400% 400%;
+  animation: gradient-shift-extended 15s ease-in-out infinite;
 }
 
 @layer utilities {
