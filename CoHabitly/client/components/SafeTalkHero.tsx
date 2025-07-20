@@ -256,31 +256,17 @@ export default function SafeTalkHero({
   return (
     <div
       ref={heroRef}
-      className="min-h-screen relative flex items-center justify-center overflow-hidden"
+      className="min-h-screen relative flex items-center justify-center overflow-hidden transition-all duration-1000"
       style={{
-        backgroundColor: "transparent", // `linear-gradient(135deg, 
-          ${
-            currentScenarioData.type === "couples"
-              ? "hsl(350, 82%, 82%)"
-              : currentScenarioData.type === "roommate"
-                ? "hsl(217, 91%, 60%)"
-                : "hsl(142, 70%, 45%)"
-          } 0%, 
-          ${
-            currentScenarioData.type === "couples"
-              ? "hsl(340, 70%, 70%)"
-              : currentScenarioData.type === "roommate"
-                ? "hsl(200, 85%, 50%)"
-                : "hsl(160, 75%, 35%)"
-          } 100%)`,
+        backgroundColor: "transparent",
       }}
     >
-      {/* Background Elements */}
+      {/* Background Elements with gradual color transitions */}
       <div className="absolute inset-0">
         {Array.from({ length: 6 }, (_, i) => (
           <div
             key={i}
-            className={`absolute rounded-full blur-3xl animate-float ${
+            className={`absolute rounded-full blur-3xl animate-float transition-all duration-1000 ${
               currentScenarioData.type === "couples"
                 ? "bg-rose-300/20"
                 : currentScenarioData.type === "roommate"
@@ -319,7 +305,7 @@ export default function SafeTalkHero({
                   style={{ animationDelay: `${index * 0.2}s` }}
                 >
                   <div
-                    className={`max-w-xs px-6 py-4 rounded-2xl glass-card-enhanced ${
+                    className={`max-w-xs px-6 py-4 rounded-2xl glass-card-enhanced animate-fade-in-up ${
                       message.type === "user"
                         ? "bg-white/90 text-gray-900"
                         : "bg-white/95 text-gray-900 border border-white/30"
