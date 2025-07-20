@@ -173,6 +173,8 @@ export default function SafeTalkHero({
       setChatMessages([]);
       setIsTyping(false);
       setShowCTAs(false);
+      setShowUserMessage(false);
+      setShowAiMessage(false);
       onAnimationRestarted?.();
 
       // Trigger a new animation sequence by forcing the scenario to update
