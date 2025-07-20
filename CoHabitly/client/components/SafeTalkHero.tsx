@@ -163,6 +163,20 @@ export default function SafeTalkHero({
     }
   }, [shouldRestartAnimation, animationLoopActive, onAnimationRestarted]);
 
+  // Sync scenario with currentDemo when demo selection changes externally
+  useEffect(() => {
+    const targetScenarioIndex = scenarios.findIndex(
+      (s) => s.type === currentDemo,
+    );
+    if (
+      targetScenarioIndex !== -1 &&
+      targetScenarioIndex !== currentScenario &&
+      !animationLoopActive
+    ) {
+      setCurrentScenario(targetScenarioIndex);
+    }
+  }, [currentDemo, currentScenario, animationLoopActive, scenarios]);
+
   const handleCTAClick = (action: string) => {
     const scenario = scenarios[currentScenario];
     setShowCTAs(false);
