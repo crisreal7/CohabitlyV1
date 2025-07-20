@@ -167,11 +167,36 @@ export default function SafeTalkHero({
       setChatMessages([]);
       setIsTyping(false);
       setShowCTAs(false);
-      // Force a new animation cycle to start
-      setCurrentScenario((prev) => prev);
       onAnimationRestarted?.();
+
+      // Trigger a new animation sequence by forcing the scenario to update
+      // This will cause the animation useEffect to run again
+      setCurrentScenario((prev) => {
+        const next = prev; // Keep same scenario but force re-render
+        return next;
+      });
     }
   }, [shouldRestartAnimation, onAnimationRestarted]);
+
+  // Force animation to restart when animationLoopActive becomes true again
+  useEffect(() => {
+    if (
+      animationLoopActive &&
+      hasUserScrolled === false &&
+      chatMessages.length === 0
+    ) {
+      // This is a restart scenario - force the animation to begin
+      const scenario = scenarios[currentScenario];
+      onScenarioChange?.(scenario.type);
+    }
+  }, [
+    animationLoopActive,
+    hasUserScrolled,
+    chatMessages.length,
+    currentScenario,
+    scenarios,
+    onScenarioChange,
+  ]);
 
   // Sync scenario with currentDemo when demo selection changes externally
   useEffect(() => {
