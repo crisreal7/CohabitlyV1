@@ -160,12 +160,18 @@ export default function SafeTalkHero({
 
   // Handle restart animation from parent
   useEffect(() => {
-    if (shouldRestartAnimation && !animationLoopActive) {
+    if (shouldRestartAnimation) {
+      // Reset all states and restart the animation
       setAnimationLoopActive(true);
       setHasUserScrolled(false);
+      setChatMessages([]);
+      setIsTyping(false);
+      setShowCTAs(false);
+      // Force a new animation cycle to start
+      setCurrentScenario((prev) => prev);
       onAnimationRestarted?.();
     }
-  }, [shouldRestartAnimation, animationLoopActive, onAnimationRestarted]);
+  }, [shouldRestartAnimation, onAnimationRestarted]);
 
   // Sync scenario with currentDemo when demo selection changes externally
   useEffect(() => {
