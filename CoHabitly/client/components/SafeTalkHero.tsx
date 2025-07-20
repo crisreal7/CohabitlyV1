@@ -27,6 +27,8 @@ export default function SafeTalkHero({
   onDemoSelect,
   currentDemo,
   onScenarioChange,
+  shouldRestartAnimation = false,
+  onAnimationRestarted,
 }: SafeTalkHeroProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentScenario, setCurrentScenario] = useState(0);
