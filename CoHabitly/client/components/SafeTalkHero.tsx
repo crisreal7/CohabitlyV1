@@ -266,7 +266,7 @@ export default function SafeTalkHero({
         {Array.from({ length: 6 }, (_, i) => (
           <div
             key={i}
-            className={`absolute rounded-full blur-3xl animate-float transition-all duration-1000 ${
+            className={`absolute rounded-full blur-3xl animate-float transition-all duration-3000 ease-in-out ${
               currentScenarioData.type === "couples"
                 ? "bg-rose-300/20"
                 : currentScenarioData.type === "roommate"
