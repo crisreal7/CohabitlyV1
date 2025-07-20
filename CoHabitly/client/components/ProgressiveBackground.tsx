@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 interface ProgressiveBackgroundProps {
   currentSection: "hero" | "demo" | "admin" | "roadmap";
   heroTheme: "roommate" | "couples" | "student";
+  showAdminSection?: boolean;
 }
 
 export default function ProgressiveBackground({
