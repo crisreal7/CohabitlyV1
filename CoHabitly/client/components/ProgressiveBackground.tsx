@@ -85,11 +85,10 @@ export default function ProgressiveBackground({
 
   const themeColors = getThemeColors();
 
-  // Calculate gradient stops based on scroll progress
+  // Calculate gradient stops based on scroll progress - extended hero theme through demo
   const getProgressiveGradient = () => {
-    if (scrollProgress <= 0.25) {
-      // Hero section (0-25%)
-      const sectionProgress = scrollProgress / 0.25;
+    if (scrollProgress <= 0.45) {
+      // Hero and Demo sections (0-45%) - maintain hero theme seamlessly
       return `
         linear-gradient(135deg, 
           hsl(${themeColors.hero.primary}) 0%,
@@ -97,9 +96,9 @@ export default function ProgressiveBackground({
           hsl(${themeColors.hero.accent}) 100%
         )
       `;
-    } else if (scrollProgress <= 0.5) {
-      // Hero to Admin transition (25-50%)
-      const sectionProgress = (scrollProgress - 0.25) / 0.25;
+    } else if (scrollProgress <= 0.7) {
+      // Demo to Admin transition (45-70%)
+      const sectionProgress = (scrollProgress - 0.45) / 0.25;
 
       // Interpolate between hero and admin colors
       const interpolateHSL = (
@@ -144,8 +143,8 @@ export default function ProgressiveBackground({
           hsl(${accentColor}) 100%
         )
       `;
-    } else if (scrollProgress <= 0.75) {
-      // Admin section (50-75%)
+    } else if (scrollProgress <= 0.85) {
+      // Admin section (70-85%)
       return `
         linear-gradient(135deg, 
           hsl(${adminColors.primary}) 0%,
@@ -154,8 +153,8 @@ export default function ProgressiveBackground({
         )
       `;
     } else {
-      // Admin to Roadmap transition (75-100%)
-      const sectionProgress = (scrollProgress - 0.75) / 0.25;
+      // Admin to Roadmap transition (85-100%)
+      const sectionProgress = (scrollProgress - 0.85) / 0.15;
 
       // Interpolate from admin to roadmap (white)
       const interpolateToWhite = (color: string, progress: number) => {
@@ -200,13 +199,13 @@ export default function ProgressiveBackground({
 
   // Enhanced floating particles based on current theme
   const getParticleColors = () => {
-    if (scrollProgress <= 0.25) {
+    if (scrollProgress <= 0.45) {
       return {
         color1: `hsl(${themeColors.hero.primary})`,
         color2: `hsl(${themeColors.hero.secondary})`,
         color3: `hsl(${themeColors.hero.accent})`,
       };
-    } else if (scrollProgress <= 0.75) {
+    } else if (scrollProgress <= 0.85) {
       return {
         color1: `hsl(${adminColors.primary})`,
         color2: `hsl(${adminColors.secondary})`,
