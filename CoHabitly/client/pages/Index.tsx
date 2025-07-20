@@ -523,9 +523,9 @@ export default function Index() {
         idleTimerRef.current = null;
       }
 
-      const wasAtTop = isAtTop;
+      const wasAtTop = isAtTopRef.current;
       const nowAtTop = scrollY < 100;
-      setIsAtTop(nowAtTop);
+      isAtTopRef.current = nowAtTop;
 
       if (scrollY < windowHeight * 0.8) {
         setCurrentSection("hero");
