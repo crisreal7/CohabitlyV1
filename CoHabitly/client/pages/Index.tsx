@@ -636,7 +636,7 @@ export default function Index() {
                         : "bg-white/20 text-blue-100 hover:bg-white/30"
                     }`}
                     onClick={() => {
-                      setDemoType("roommate");
+                      handleDemoTypeChange("roommate");
                       const demoPhone = document.querySelector(".demo-phone");
                       if (demoPhone) {
                         demoPhone.scrollIntoView({
