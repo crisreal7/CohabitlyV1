@@ -122,7 +122,7 @@ export default function SafeTalkHero({
           ]);
         },
       },
-      { delay: 1300, action: () => setShowCTAs(true) },
+      { delay: 2300, action: () => setShowCTAs(true) }, // 1 second after AI message (1300 + 1000)
       // Wait 5 seconds before entering loop
       { delay: 6500, action: () => {} }, // Just a placeholder for the 5-second wait
     ];
