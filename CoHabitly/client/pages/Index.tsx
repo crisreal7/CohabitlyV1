@@ -553,6 +553,8 @@ export default function Index() {
             setDemoType(type);
           }
         }}
+        shouldRestartAnimation={shouldRestartAnimation}
+        onAnimationRestarted={() => setShouldRestartAnimation(false)}
       />
       {/* Interactive Demo Section */}
       <section
