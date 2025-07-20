@@ -114,7 +114,7 @@ export default function ProgressiveBackground({
 
   const themeColors = getThemeColors();
 
-  // Calculate gradient stops based on scroll progress - extended hero theme through demo
+  // Calculate gradient stops based on scroll progress - conditional admin section
   const getProgressiveGradient = () => {
     if (scrollProgress <= 0.45) {
       // Hero and Demo sections (0-45%) - maintain hero theme seamlessly
@@ -125,67 +125,112 @@ export default function ProgressiveBackground({
           hsl(${themeColors.hero.accent}) 100%
         )
       `;
-    } else if (scrollProgress <= 0.7) {
-      // Demo to Admin transition (45-70%)
-      const sectionProgress = (scrollProgress - 0.45) / 0.25;
+    } else if (showAdminSection) {
+      // Admin section is shown - go through purple transition
+      if (scrollProgress <= 0.7) {
+        // Demo to Admin transition (45-70%)
+        const sectionProgress = (scrollProgress - 0.45) / 0.25;
 
-      // Interpolate between hero and admin colors
-      const interpolateHSL = (
-        color1: string,
-        color2: string,
-        progress: number,
-      ) => {
-        const [h1, s1, l1] = color1
-          .split(", ")
-          .map((v) => parseFloat(v.replace("%", "")));
-        const [h2, s2, l2] = color2
-          .split(", ")
-          .map((v) => parseFloat(v.replace("%", "")));
+        // Interpolate between hero and admin colors
+        const interpolateHSL = (
+          color1: string,
+          color2: string,
+          progress: number,
+        ) => {
+          const [h1, s1, l1] = color1
+            .split(", ")
+            .map((v) => parseFloat(v.replace("%", "")));
+          const [h2, s2, l2] = color2
+            .split(", ")
+            .map((v) => parseFloat(v.replace("%", "")));
 
-        const h = h1 + (h2 - h1) * progress;
-        const s = s1 + (s2 - s1) * progress;
-        const l = l1 + (l2 - l1) * progress;
+          const h = h1 + (h2 - h1) * progress;
+          const s = s1 + (s2 - s1) * progress;
+          const l = l1 + (l2 - l1) * progress;
 
-        return `${h}, ${s}%, ${l}%`;
-      };
+          return `${h}, ${s}%, ${l}%`;
+        };
 
-      const primaryColor = interpolateHSL(
-        themeColors.hero.primary,
-        adminColors.primary,
-        sectionProgress,
-      );
-      const secondaryColor = interpolateHSL(
-        themeColors.hero.secondary,
-        adminColors.secondary,
-        sectionProgress,
-      );
-      const accentColor = interpolateHSL(
-        themeColors.hero.accent,
-        adminColors.accent,
-        sectionProgress,
-      );
+        const primaryColor = interpolateHSL(
+          themeColors.hero.primary,
+          adminColors.primary,
+          sectionProgress,
+        );
+        const secondaryColor = interpolateHSL(
+          themeColors.hero.secondary,
+          adminColors.secondary,
+          sectionProgress,
+        );
+        const accentColor = interpolateHSL(
+          themeColors.hero.accent,
+          adminColors.accent,
+          sectionProgress,
+        );
 
-      return `
-        linear-gradient(135deg, 
-          hsl(${primaryColor}) 0%,
-          hsl(${secondaryColor}) 50%,
-          hsl(${accentColor}) 100%
-        )
-      `;
-    } else if (scrollProgress <= 0.85) {
-      // Admin section (70-85%)
-      return `
-        linear-gradient(135deg, 
-          hsl(${adminColors.primary}) 0%,
-          hsl(${adminColors.secondary}) 50%,
-          hsl(${adminColors.accent}) 100%
-        )
-      `;
+        return `
+          linear-gradient(135deg, 
+            hsl(${primaryColor}) 0%,
+            hsl(${secondaryColor}) 50%,
+            hsl(${accentColor}) 100%
+          )
+        `;
+      } else if (scrollProgress <= 0.85) {
+        // Admin section (70-85%)
+        return `
+          linear-gradient(135deg, 
+            hsl(${adminColors.primary}) 0%,
+            hsl(${adminColors.secondary}) 50%,
+            hsl(${adminColors.accent}) 100%
+          )
+        `;
+      } else {
+        // Admin to Roadmap transition (85-100%)
+        const sectionProgress = (scrollProgress - 0.85) / 0.15;
+
+        // Interpolate from admin to roadmap (white)
+        const interpolateToWhite = (color: string, progress: number) => {
+          const [h, s, l] = color
+            .split(", ")
+            .map((v) => parseFloat(v.replace("%", "")));
+          const targetL = parseFloat(
+            roadmapColors.primary.split(", ")[2].replace("%", ""),
+          );
+          const targetS = parseFloat(
+            roadmapColors.secondary.split(", ")[1].replace("%", ""),
+          );
+
+          const newS = s + (targetS - s) * progress;
+          const newL = l + (targetL - l) * progress;
+
+          return `${h}, ${newS}%, ${newL}%`;
+        };
+
+        const primaryColor = interpolateToWhite(
+          adminColors.primary,
+          sectionProgress,
+        );
+        const secondaryColor = interpolateToWhite(
+          adminColors.secondary,
+          sectionProgress,
+        );
+        const accentColor = interpolateToWhite(
+          adminColors.accent,
+          sectionProgress,
+        );
+
+        return `
+          linear-gradient(135deg, 
+            hsl(${primaryColor}) 0%,
+            hsl(${secondaryColor}) 50%,
+            hsl(${accentColor}) 100%
+          )
+        `;
+      }
     } else {
-      // Admin to Roadmap transition (85-100%)
-      const sectionProgress = (scrollProgress - 0.85) / 0.15;
+      // No admin section - go directly from demo colors to white
+      const sectionProgress = Math.min((scrollProgress - 0.45) / 0.4, 1); // 45% to 85% progress
 
-      // Interpolate from admin to roadmap (white)
+      // Interpolate directly from hero to white
       const interpolateToWhite = (color: string, progress: number) => {
         const [h, s, l] = color
           .split(", ")
@@ -204,15 +249,15 @@ export default function ProgressiveBackground({
       };
 
       const primaryColor = interpolateToWhite(
-        adminColors.primary,
+        themeColors.hero.primary,
         sectionProgress,
       );
       const secondaryColor = interpolateToWhite(
-        adminColors.secondary,
+        themeColors.hero.secondary,
         sectionProgress,
       );
       const accentColor = interpolateToWhite(
-        adminColors.accent,
+        themeColors.hero.accent,
         sectionProgress,
       );
 
@@ -234,7 +279,7 @@ export default function ProgressiveBackground({
         color2: `hsl(${themeColors.hero.secondary})`,
         color3: `hsl(${themeColors.hero.accent})`,
       };
-    } else if (scrollProgress <= 0.85) {
+    } else if (showAdminSection && scrollProgress <= 0.85) {
       return {
         color1: `hsl(${adminColors.primary})`,
         color2: `hsl(${adminColors.secondary})`,
