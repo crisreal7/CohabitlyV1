@@ -108,6 +108,8 @@ export default function SafeTalkHero({
     setChatMessages([]);
     setIsTyping(false);
     setShowCTAs(false);
+    setShowUserMessage(false);
+    setShowAiMessage(false);
 
     // Notify parent of scenario change
     onScenarioChange?.(scenario.type);
@@ -126,6 +128,7 @@ export default function SafeTalkHero({
         action: () => {
           setIsTyping(false);
           setChatMessages([{ type: "user", content: scenario.userMessage }]);
+          setShowUserMessage(true);
         },
       },
       // Step 3: Show AI response (after 3 seconds)
@@ -136,6 +139,7 @@ export default function SafeTalkHero({
             ...prev,
             { type: "ai", content: scenario.aiResponse },
           ]);
+          setShowAiMessage(true);
         },
       },
       // Step 4: Show AI button options (after 2 seconds)
