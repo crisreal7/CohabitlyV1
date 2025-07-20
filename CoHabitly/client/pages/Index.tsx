@@ -90,6 +90,20 @@ export default function Index() {
       setDemoTab("overview");
     }
   }, [demoType]);
+
+  // Handle demo type changes and sync with hero
+  const handleDemoTypeChange = (
+    newType: "roommate" | "couples" | "student",
+  ) => {
+    setDemoType(newType);
+
+    // If user scrolls back up after changing demo type,
+    // we want the hero to reflect the new demo type
+    if (currentSection === "hero") {
+      // Force hero to update to match the selected demo
+      // This will be handled by the SafeTalkHero component's scenario matching
+    }
+  };
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const handleEmailSubmit = (e: React.FormEvent) => {
